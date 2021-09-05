@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { store } from "../state";
 
-function MIDI(props) {
+function MIDI({ setNote, setVelocity, setCommand }) {
+  const { state, dispatch } = useContext(store);
   useEffect(() => {
     navigator.requestMIDIAccess().then(function (access) {
       // Get lists of available MIDI controllers
@@ -11,9 +13,10 @@ function MIDI(props) {
         const command = midiMessage.data[0];
         const note = midiMessage.data[1];
         const velocity = midiMessage.data.length > 2 ? midiMessage.data[2] : 0;
-        console.log("command: ", command);
-        console.log("note: ", note);
-        console.log("veloctiy: ", velocity);
+        // console.log("command: ", command);
+        // console.log("note: ", note);
+        // console.log("veloctiy: ", velocity);
+        dispatch({ type: "note", value: { command, note, velocity } });
       }
 
       for (let input of inputs) {
@@ -29,7 +32,7 @@ function MIDI(props) {
         console.log(e.port.name, e.port.manufacturer, e.port.state);
       };
     });
-  });
+  }, []);
   return null;
 }
 
